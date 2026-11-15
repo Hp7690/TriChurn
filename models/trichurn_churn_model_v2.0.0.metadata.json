@@ -1,0 +1,500 @@
+{
+  "model_name": "logistic_regression",
+  "model_version": "2.0.0",
+  "trained_at": "2026-10-31T14:31:01+00:00",
+  "feature_names": [
+    "SeniorCitizen",
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod"
+  ],
+  "feature_count": 19,
+  "model_feature_names": [
+    "num__SeniorCitizen",
+    "num__tenure",
+    "num__MonthlyCharges",
+    "num__TotalCharges",
+    "num__service_count",
+    "num__protective_service_count",
+    "num__contract_risk",
+    "num__payment_risk",
+    "num__monthly_vs_avg_charge_delta",
+    "cat__gender_Female",
+    "cat__gender_Male",
+    "cat__Partner_No",
+    "cat__Partner_Yes",
+    "cat__Dependents_No",
+    "cat__Dependents_Yes",
+    "cat__PhoneService_No",
+    "cat__PhoneService_Yes",
+    "cat__MultipleLines_No",
+    "cat__MultipleLines_No phone service",
+    "cat__MultipleLines_Yes",
+    "cat__InternetService_DSL",
+    "cat__InternetService_Fiber optic",
+    "cat__InternetService_No",
+    "cat__OnlineSecurity_No",
+    "cat__OnlineSecurity_No internet service",
+    "cat__OnlineSecurity_Yes",
+    "cat__OnlineBackup_No",
+    "cat__OnlineBackup_No internet service",
+    "cat__OnlineBackup_Yes",
+    "cat__DeviceProtection_No",
+    "cat__DeviceProtection_No internet service",
+    "cat__DeviceProtection_Yes",
+    "cat__TechSupport_No",
+    "cat__TechSupport_No internet service",
+    "cat__TechSupport_Yes",
+    "cat__StreamingTV_No",
+    "cat__StreamingTV_No internet service",
+    "cat__StreamingTV_Yes",
+    "cat__StreamingMovies_No",
+    "cat__StreamingMovies_No internet service",
+    "cat__StreamingMovies_Yes",
+    "cat__Contract_Month-to-month",
+    "cat__Contract_One year",
+    "cat__Contract_Two year",
+    "cat__PaperlessBilling_No",
+    "cat__PaperlessBilling_Yes",
+    "cat__PaymentMethod_Bank transfer (automatic)",
+    "cat__PaymentMethod_Credit card (automatic)",
+    "cat__PaymentMethod_Electronic check",
+    "cat__PaymentMethod_Mailed check",
+    "cat__tenure_group_0-12m",
+    "cat__tenure_group_13-24m",
+    "cat__tenure_group_25-48m",
+    "cat__tenure_group_49m+",
+    "cat__monthly_charge_band_Q1",
+    "cat__monthly_charge_band_Q2",
+    "cat__monthly_charge_band_Q3",
+    "cat__monthly_charge_band_Q4"
+  ],
+  "model_feature_count": 58,
+  "target": "Churn",
+  "positive_class": "Yes",
+  "imbalance_strategy": "none",
+  "hyperparameters": {
+    "solver": "lbfgs",
+    "max_iter": 3000,
+    "C": 3.0
+  },
+  "calibration": {
+    "method": "none",
+    "parameters": {
+      "method": "none"
+    }
+  },
+  "threshold": {
+    "value": 0.34,
+    "metric": "f1",
+    "source": "optimized"
+  },
+  "random_state": 42,
+  "training_configuration": {
+    "training": {
+      "seed": 42,
+      "split": {
+        "val_size": 0.15,
+        "test_size": 0.15
+      },
+      "cv": {
+        "n_splits": 5
+      },
+      "imbalance": {
+        "candidates": [
+          "none",
+          "balanced"
+        ]
+      },
+      "models": {
+        "logistic_regression": {
+          "C": 1.0,
+          "max_iter": 2000
+        },
+        "random_forest": {
+          "n_estimators": 300,
+          "min_samples_leaf": 3,
+          "max_depth": null
+        },
+        "xgboost": {
+          "n_estimators": 300,
+          "max_depth": 4,
+          "learning_rate": 0.05,
+          "subsample": 0.8,
+          "colsample_bytree": 0.8
+        }
+      }
+    },
+    "features": {
+      "roles": {
+        "tenure": "tenure",
+        "monthly_charges": "MonthlyCharges",
+        "total_charges": "TotalCharges",
+        "contract": "Contract",
+        "payment_method": "PaymentMethod",
+        "support_calls": null,
+        "service_columns": [
+          "PhoneService",
+          "MultipleLines",
+          "OnlineSecurity",
+          "OnlineBackup",
+          "DeviceProtection",
+          "TechSupport",
+          "StreamingTV",
+          "StreamingMovies"
+        ],
+        "protective_columns": [
+          "OnlineSecurity",
+          "OnlineBackup",
+          "DeviceProtection",
+          "TechSupport"
+        ]
+      },
+      "affirmative_values": [
+        "yes",
+        "true",
+        "1"
+      ],
+      "tenure_bins": [
+        12,
+        24,
+        48
+      ],
+      "charge_band_quantiles": 4,
+      "contract_risk": {
+        "Month-to-month": 2,
+        "One year": 1,
+        "Two year": 0
+      },
+      "payment_risk": {
+        "Electronic check": 1,
+        "Mailed check": 0,
+        "Bank transfer (automatic)": 0,
+        "Credit card (automatic)": 0
+      }
+    },
+    "optimization": {
+      "seed": null,
+      "model_version": "2.0.0",
+      "tuning": {
+        "method": "random",
+        "primary_metric": "pr_auc",
+        "tiebreak_metric": "roc_auc",
+        "cv": {
+          "n_splits": 5
+        },
+        "include_baseline": true,
+        "n_iter": {
+          "logistic_regression": 14,
+          "random_forest": 18,
+          "xgboost": 24
+        },
+        "spaces": {
+          "logistic_regression": {
+            "imbalance": [
+              "none",
+              "balanced"
+            ],
+            "C": [
+              0.01,
+              0.03,
+              0.1,
+              0.3,
+              1.0,
+              3.0,
+              10.0
+            ],
+            "solver": [
+              "lbfgs",
+              "liblinear",
+              "saga"
+            ],
+            "max_iter": [
+              3000
+            ]
+          },
+          "random_forest": {
+            "imbalance": [
+              "none",
+              "balanced"
+            ],
+            "n_estimators": [
+              200,
+              300,
+              500
+            ],
+            "max_depth": [
+              4,
+              6,
+              8,
+              12,
+              null
+            ],
+            "min_samples_split": [
+              2,
+              5,
+              10,
+              20
+            ],
+            "min_samples_leaf": [
+              1,
+              3,
+              5,
+              10
+            ],
+            "max_features": [
+              "sqrt",
+              "log2",
+              0.5
+            ]
+          },
+          "xgboost": {
+            "imbalance": [
+              "none",
+              "balanced"
+            ],
+            "n_estimators": [
+              100,
+              200,
+              300,
+              500
+            ],
+            "max_depth": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "learning_rate": [
+              0.01,
+              0.03,
+              0.05,
+              0.1
+            ],
+            "subsample": [
+              0.6,
+              0.8,
+              1.0
+            ],
+            "colsample_bytree": [
+              0.6,
+              0.8,
+              1.0
+            ],
+            "min_child_weight": [
+              1,
+              3,
+              5,
+              10
+            ],
+            "reg_alpha": [
+              0.0,
+              0.1,
+              1.0
+            ],
+            "reg_lambda": [
+              1.0,
+              3.0,
+              10.0
+            ]
+          }
+        }
+      },
+      "selection": {
+        "cv_weight": 0.5,
+        "validation_weight": 0.5,
+        "metric_weights": {
+          "pr_auc": 0.4,
+          "roc_auc": 0.3,
+          "f1": 0.2,
+          "recall": 0.1
+        }
+      },
+      "calibration": {
+        "methods": [
+          "none",
+          "sigmoid",
+          "isotonic"
+        ],
+        "select_by": "brier",
+        "min_improvement": 0.0005,
+        "cv_folds": 5,
+        "reliability_bins": 10
+      },
+      "threshold": {
+        "metric": "f1",
+        "beta": 1.0,
+        "min_precision": 0.5,
+        "grid": {
+          "start": 0.05,
+          "stop": 0.95,
+          "step": 0.005
+        },
+        "override": null
+      },
+      "artifacts": {
+        "dir": "models",
+        "name": "trichurn_churn_model"
+      },
+      "report": {
+        "path": "ml/experiments/phase2_report.json"
+      }
+    }
+  },
+  "tuning": {
+    "n_candidates": {
+      "logistic_regression": 16,
+      "random_forest": 20,
+      "xgboost": 26
+    },
+    "primary_metric": "pr_auc",
+    "n_splits": 5
+  },
+  "metrics": {
+    "cv_train": {
+      "accuracy": {
+        "mean": 0.8060458603185717,
+        "std": 0.014738654441503476
+      },
+      "precision": {
+        "mean": 0.6661983815976334,
+        "std": 0.042906676217556075
+      },
+      "recall": {
+        "mean": 0.5443625515486532,
+        "std": 0.02078151759032791
+      },
+      "f1": {
+        "mean": 0.5985666483606653,
+        "std": 0.02270776284403649
+      },
+      "roc_auc": {
+        "mean": 0.846622701386375,
+        "std": 0.005236341378626913
+      },
+      "pr_auc": {
+        "mean": 0.6646840273266209,
+        "std": 0.02555698358226155
+      },
+      "n_splits": 5
+    },
+    "validation": {
+      "uncalibrated_at_0.5": {
+        "probability_metrics": {
+          "roc_auc": 0.8332217412040943,
+          "pr_auc": 0.6416994536680845,
+          "brier": 0.13930533202705114,
+          "log_loss": 0.4313396154648414
+        },
+        "threshold_metrics": {
+          "threshold": 0.5,
+          "accuracy": 0.8032166508987701,
+          "precision": 0.6682027649769585,
+          "recall": 0.5160142348754448,
+          "f1": 0.5823293172690763,
+          "confusion_matrix": [
+            [
+              704,
+              72
+            ],
+            [
+              136,
+              145
+            ]
+          ]
+        }
+      },
+      "calibrated_at_selected_threshold": {
+        "probability_metrics": {
+          "roc_auc": 0.8332217412040943,
+          "pr_auc": 0.6416994536680845,
+          "brier": 0.13930533202705114,
+          "log_loss": 0.4313396154648414
+        },
+        "threshold_metrics": {
+          "threshold": 0.34,
+          "accuracy": 0.7786187322611163,
+          "precision": 0.56657223796034,
+          "recall": 0.7117437722419929,
+          "f1": 0.6309148264984227,
+          "confusion_matrix": [
+            [
+              623,
+              153
+            ],
+            [
+              81,
+              200
+            ]
+          ]
+        }
+      }
+    },
+    "test": {
+      "n_test": 1057,
+      "positive_rate": 0.26490066225165565,
+      "selected_threshold": 0.34,
+      "probability_metrics": {
+        "roc_auc": 0.8492071152785439,
+        "pr_auc": 0.6411807304400241,
+        "brier": 0.13550287198874078,
+        "log_loss": 0.41066933801902133
+      },
+      "threshold_metrics": {
+        "threshold": 0.34,
+        "accuracy": 0.771050141911069,
+        "precision": 0.5502645502645502,
+        "recall": 0.7428571428571429,
+        "f1": 0.6322188449848024,
+        "confusion_matrix": [
+          [
+            607,
+            170
+          ],
+          [
+            72,
+            208
+          ]
+        ]
+      },
+      "lock_fingerprint": "602759f0cb8ab7a88e4fdea819907a6c54cdbb390f74481a5643213562a51fbe",
+      "note": "probability_metrics are threshold-free; threshold_metrics apply the validation-selected threshold. The test split influenced no decision."
+    }
+  },
+  "dataset": {
+    "path": "ml/data/raw/telco_churn.csv",
+    "version": "sha256:16320c9c1ec7",
+    "rows": 7043,
+    "split_sizes": {
+      "train": 4929,
+      "validation": 1057,
+      "test": 1057
+    }
+  },
+  "decision_fingerprint": "602759f0cb8ab7a88e4fdea819907a6c54cdbb390f74481a5643213562a51fbe",
+  "environment": {
+    "python": "3.12.3",
+    "scikit_learn": "1.8.0",
+    "xgboost": "3.4.1",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4"
+  },
+  "artifact_file": "trichurn_churn_model_v2.0.0.joblib",
+  "artifact_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad"
+}

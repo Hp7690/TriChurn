@@ -1,0 +1,19 @@
+# Role -> column mapping for feature engineering. A feature is only created when
+# every column it needs exists; otherwise it is skipped and reported.
+roles:
+  tenure: tenure
+  monthly_charges: MonthlyCharges
+  total_charges: TotalCharges
+  contract: Contract
+  payment_method: PaymentMethod
+  support_calls: null            # not in Telco; set for datasets that have it
+  service_columns: [PhoneService, MultipleLines, OnlineSecurity, OnlineBackup,
+                    DeviceProtection, TechSupport, StreamingTV, StreamingMovies]
+  protective_columns: [OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport]
+affirmative_values: ["yes", "true", "1"]
+tenure_bins: [12, 24, 48]        # -> 0-12, 13-24, 25-48, 49+ (months)
+charge_band_quantiles: 4         # learned from TRAIN data only (inside the pipeline)
+# Ordinal domain priors (commitment / friction), NOT learned from the target.
+contract_risk: {"Month-to-month": 2, "One year": 1, "Two year": 0}
+payment_risk: {"Electronic check": 1, "Mailed check": 0,
+               "Bank transfer (automatic)": 0, "Credit card (automatic)": 0}

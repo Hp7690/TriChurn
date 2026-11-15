@@ -1,0 +1,7 @@
+# Phase 3: SHAP explainability for the locked Phase 2 model. Nothing here changes the model, calibration or threshold.
+seed: 42                     # deterministic TRAIN background sampling
+background:
+  max_rows: 100              # upper bound on TRAIN rows used as the SHAP background (raw rows, no target column)
+reconstruction:
+  tolerance: 1.0e-6          # |base_value + sum(SHAP) - model log-odds| must stay below this, else an error is raised
+direction_epsilon: 1.0e-9    # |SHAP| <= epsilon is labelled "neutral"

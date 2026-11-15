@@ -1,0 +1,67 @@
+# Phase 2: tuning, model comparison, calibration, thresholding, final evaluation, serialization.
+# Split ratios and the base seed come from training.yaml; everything below is Phase 2 policy.
+seed: null                  # null => inherit training.yaml `seed` (single source of truth)
+model_version: "2.0.0"
+
+tuning:
+  method: random            # seeded random search (ParameterSampler) on TRAIN only
+  primary_metric: pr_auc    # candidates are ranked by mean CV value of this metric
+  tiebreak_metric: roc_auc
+  cv: {n_splits: 5}         # StratifiedKFold(shuffle=True, random_state=seed); identical folds for every candidate
+  include_baseline: true    # Phase 1.1 default params are always evaluated as candidates
+  n_iter: {logistic_regression: 14, random_forest: 18, xgboost: 24}   # capped at the size of the grid
+  # `imbalance` is the class_weight switch: none -> class_weight=None / scale_pos_weight=1,
+  # balanced -> class_weight="balanced" ("balanced_subsample" for RF) / scale_pos_weight=neg/pos.
+  spaces:
+    logistic_regression:
+      imbalance: [none, balanced]
+      C: [0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0]
+      solver: [lbfgs, liblinear, saga]
+      max_iter: [3000]
+    random_forest:
+      imbalance: [none, balanced]
+      n_estimators: [200, 300, 500]
+      max_depth: [4, 6, 8, 12, null]
+      min_samples_split: [2, 5, 10, 20]
+      min_samples_leaf: [1, 3, 5, 10]
+      max_features: [sqrt, log2, 0.5]
+    xgboost:
+      imbalance: [none, balanced]
+      n_estimators: [100, 200, 300, 500]
+      max_depth: [2, 3, 4, 5, 6]
+      learning_rate: [0.01, 0.03, 0.05, 0.1]
+      subsample: [0.6, 0.8, 1.0]
+      colsample_bytree: [0.6, 0.8, 1.0]
+      min_child_weight: [1, 3, 5, 10]
+      reg_alpha: [0.0, 0.1, 1.0]
+      reg_lambda: [1.0, 3.0, 10.0]
+
+selection:                  # model comparison: composite of CV (TRAIN) and VALIDATION scores
+  cv_weight: 0.5
+  validation_weight: 0.5
+  # PR-AUC / ROC-AUC are threshold-free. F1 / recall are evaluated at each model's OWN decision threshold,
+  # optimised on that model's TRAIN out-of-fold probabilities (not a fixed 0.5); they still depend on the
+  # model/class-weighting, so they carry a smaller combined weight on purpose. The final production threshold
+  # is chosen separately on VALIDATION (see `threshold` below).
+  metric_weights: {pr_auc: 0.4, roc_auc: 0.3, f1: 0.2, recall: 0.1}
+
+calibration:                # fitted on TRAIN out-of-fold predictions; compared on VALIDATION
+  methods: [none, sigmoid, isotonic]
+  select_by: brier          # brier | log_loss (lower is better)
+  min_improvement: 0.0005   # parsimony: a more complex method (later in `methods`) must beat the simpler
+                            # incumbent by more than this to be selected; 0 => plain argmin, ties -> earlier method
+  cv_folds: 5
+  reliability_bins: 10
+
+threshold:                  # optimised on VALIDATION with the selected calibrated probabilities
+  metric: f1                # f1 | f_beta | recall_at_precision
+  beta: 1.0                 # used by f_beta
+  min_precision: 0.5        # used by recall_at_precision
+  grid: {start: 0.05, stop: 0.95, step: 0.005}
+  override: null            # set a number to force a policy threshold (still reported, never tuned on test)
+
+artifacts:
+  dir: models               # relative to the project root
+  name: trichurn_churn_model
+report:
+  path: ml/experiments/phase2_report.json

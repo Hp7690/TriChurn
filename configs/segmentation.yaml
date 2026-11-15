@@ -1,0 +1,63 @@
+# Phase 5: customer segmentation (K-Means) and segment intelligence.
+# CLUSTERING is unsupervised and uses ONLY the features listed below, fitted on the TRAIN split only. It never sees the
+# churn target, the model's churn probability, or any Phase 4 business output. Churn probability, CLV, value at risk,
+# ENB and decisions are used AFTERWARDS, to PROFILE the clusters (separate step, separate module).
+seed: null                         # null => inherit training.yaml `seed`
+model_version: "5.0.0"
+
+features:                          # the complete, explicit clustering feature set
+  numeric: [tenure, MonthlyCharges, TotalCharges]      # raw behavioural / value columns
+  engineered: [service_count, contract_risk]           # Phase 1 FeatureEngineer outputs (domain priors, not target-derived)
+  # Any feature (raw or engineered) whose lower-cased name is listed here is REFUSED, as are the dataset target and id.
+  forbidden: [churn, churn_probability, risk_band, clv, value_at_risk, expected_net_benefit, expected_benefit,
+              intervention_decision, recommended_action, recommended_action_id]
+imputation: median                 # median | mean   (fitted on TRAIN; TotalCharges is blank for tenure-0 customers)
+scaling: standard                  # standard | minmax | none
+
+kmeans:
+  init: k-means++                  # k-means++ | random
+  n_init: 10
+  max_iter: 300
+  tol: 1.0e-4
+  algorithm: lloyd
+
+k_selection:
+  candidates: [2, 3, 4, 5, 6, 7, 8]
+  method: silhouette               # silhouette = highest silhouette among ELIGIBLE K | fixed = use fixed_k
+  fixed_k: null
+  # The mathematically best K is not automatically the best business segmentation (K=2 usually wins on silhouette but
+  # is too coarse to act on). A K is ELIGIBLE only if it lies in [min_k, max_k] and its smallest cluster holds at least
+  # min_cluster_share of the customers. Ties go to the smaller K. All candidates' metrics are always reported.
+  min_k: 3
+  max_k: 6
+  min_cluster_share: 0.05
+  silhouette_sample_size: null     # null = all customers; an integer subsamples (seeded) for large data
+  report_metrics: [inertia, calinski_harabasz, davies_bouldin]
+
+naming:                            # deterministic rules on measured segment averages (never on label numbers)
+  value:                           # segment avg CLV / portfolio avg CLV
+    high_min_ratio: 1.15
+    low_max_ratio: 0.85
+  risk:                            # segment avg churn probability
+    high_min_probability: model_threshold    # number in [0,1], or "model_threshold" = the locked model's threshold
+    stable_max_probability: 0.20
+  tenure:                          # only used to disambiguate otherwise identical names: segment avg tenure / portfolio
+    established_min_ratio: 1.15
+    new_max_ratio: 0.85
+
+priority:                          # priority = sum(weight * metric) / sum(weights); every metric lies in [0, 1]
+  weights:                         # ILLUSTRATIVE policy choices; replace with your own
+    value_at_risk_share: 0.40      # segment value at risk / portfolio value at risk
+    total_enb_share: 0.30          # segment total ENB / portfolio total ENB (0 for all if the portfolio total is <= 0)
+    avg_churn_probability: 0.20
+    intervention_rate: 0.10        # share of the segment's customers for whom Phase 4 says INTERVENE
+  tiers:                           # first tier whose min_score <= score; must be descending and end at 0
+    - {name: HIGH,   min_score: 0.30}
+    - {name: MEDIUM, min_score: 0.15}
+    - {name: LOW,    min_score: 0.00}
+
+artifact:
+  dir: models
+  name: trichurn_segmentation
+report:
+  path: ml/experiments/phase5_report.json

@@ -1,0 +1,69 @@
+# Phase 13 - Customer Experience & Sentiment Intelligence.
+# Every value here is POLICY (limits, thresholds, scales), never data. No number in this file is a result.
+#
+# Data rule: the IBM Telco dataset has NO feedback text, tickets, survey scores or event timestamps.
+# Until real datasets are configured under `datasets:` the feedback, sentiment, complaint, NPS, CSAT and journey
+# modules report BLOCKED_BY_MISSING_DATA. Only the tenure-based lifecycle PROXY runs on Telco data.
+
+enabled: true                       # false => every module reports DISABLED
+
+limits:                             # applied to every uploaded or configured file (safe, in-memory parsing)
+  max_bytes: 5242880                # 5 MiB
+  max_rows: 100000
+  max_columns: 50
+  max_field_chars: 10000
+  max_issues_reported: 200          # the report is truncated (and says so) beyond this; counts stay complete
+
+customer_id:
+  pattern: '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$'
+
+timestamps:
+  min_date: "1990-01-01"            # earlier values are invalid
+  max_future_days: 1                # later than now + this many days is invalid
+
+data_dir: data/experience           # configured dataset files must live inside this folder (relative to project root)
+datasets:                           # null = no dataset configured. Paths are relative to data_dir; .csv or .json only.
+  feedback: null
+  tickets: null
+  nps: null
+  csat: null
+  events: null
+
+lifecycle:                          # TENURE-BASED PROXY. Not an event-based customer journey.
+  enabled: true
+  min_group_size_for_rate: 30       # churn percentages are withheld for groups smaller than this
+  probability_field: churn_probability   # optional dataset column; absent => risk distribution is BLOCKED
+  risk_bands:                       # upper bounds (exclusive) of LOW and MEDIUM; the rest is HIGH. Policy, not model output.
+    low_max: 0.20
+    medium_max: 0.50
+  groups:                           # contiguous, ascending, tenure in MONTHS; min inclusive, max exclusive, last open-ended
+    - {name: New Customer,         min_months: 0,  max_months: 6}
+    - {name: Early Lifecycle,      min_months: 6,  max_months: 12}
+    - {name: Developing Customer,  min_months: 12, max_months: 24}
+    - {name: Established Customer, min_months: 24, max_months: 48}
+    - {name: Long-Term Customer,   min_months: 48, max_months: null}
+
+surveys:
+  min_responses: 30                 # below this a score is returned but flagged low-sample (never hidden, never inflated)
+  nps:
+    scale_min: 0
+    scale_max: 10
+    detractor_max: 6                # score <= detractor_max is a detractor
+    promoter_min: 9                 # score >= promoter_min is a promoter; in between: passive
+  csat:
+    scale_min: 1
+    scale_max: 5
+    satisfied_min: 4                # score >= satisfied_min counts as satisfied
+
+complaints:
+  severities: [low, medium, high, critical]
+  statuses: [open, in_progress, resolved, closed]
+  resolved_statuses: [resolved, closed]
+  min_records: 30
+
+journey:
+  min_events: 30
+
+sentiment:
+  labels: [positive, neutral, negative]
+  min_labelled_records: 200         # below this a future training run is not statistically meaningful

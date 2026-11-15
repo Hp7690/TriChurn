@@ -1,0 +1,37 @@
+# TriChurn Phase 11 - Autonomous Retention Intelligence settings.
+# Retention actions, costs, success rates and eligibility are NOT defined here (configs/business.yaml, Phase 4).
+# Everything consequential is OFF by default; nothing in Phase 11 contacts customers or any external system.
+
+agent:
+  enabled: true                       # deterministic, rule-based recommendation generation (no LLM)
+  rules_version: "rules-1.0.0"        # stored with every recommendation; bump when a rule changes
+  max_recommendations_per_request: 500
+  # Phase 4 action id -> recommendation category
+  action_categories:
+    retention_email: retention_campaign_enrollment
+    loyalty_offer: personalized_offer
+    discount_offer: personalized_offer
+    personalized_offer: personalized_offer
+    priority_support: customer_support_followup
+  risk_bands_for_evidence_rules: [HIGH, CRITICAL]
+  subscription_review_max_tenure_months: 12
+
+monitoring:
+  enabled: true                       # BATCH snapshot comparison only; there is no live event source
+  min_probability_change: 0.10        # absolute change in churn probability that counts as meaningful
+
+workflow:
+  # No authentication exists in the API. Approving/rejecting/executing/feedback require an authenticated reviewer
+  # from an identity provider that is NOT yet implemented, so these stay disabled even if this flag is true.
+  approvals_enabled: false
+  note_max_length: 200
+
+learning:
+  # Feedback is collected and evaluated, but NO model is trained or retrained by Phase 11.
+  enabled: false
+  min_validated_outcomes: 1000        # conservative data-sufficiency defaults, not a statistical power calculation
+  min_outcomes_per_action: 100
+
+pagination:
+  default_page_size: 25
+  max_page_size: 100

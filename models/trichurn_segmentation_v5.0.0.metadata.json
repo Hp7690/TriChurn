@@ -1,0 +1,297 @@
+{
+  "kind": "segmentation",
+  "model_name": "kmeans_segmentation",
+  "model_version": "5.0.0",
+  "trained_at": "2026-11-01T02:28:44+00:00",
+  "random_state": 42,
+  "selected_k": 3,
+  "k_selection": {
+    "selected_k": 3,
+    "method": "silhouette",
+    "rationale": "K=3 has the highest silhouette (0.4072) among eligible K in [3, 6] with smallest cluster >= 5%. The unconstrained silhouette optimum is K=2, excluded by the business constraints.",
+    "best_silhouette_k_unconstrained": 2,
+    "candidates": [
+      {
+        "k": 2,
+        "silhouette": 0.4160086675798383,
+        "min_cluster_share": 0.34530330695881517,
+        "eligible": false,
+        "ineligible_reason": "K=2 is outside the allowed business range [3, 6]",
+        "inertia": 13221.726359508884,
+        "calinski_harabasz": 4256.82382610641,
+        "davies_bouldin": 0.9658294701089369
+      },
+      {
+        "k": 3,
+        "silhouette": 0.4071570644136643,
+        "min_cluster_share": 0.18421586528707648,
+        "eligible": true,
+        "ineligible_reason": null,
+        "inertia": 9180.420170687887,
+        "calinski_harabasz": 4148.9699957292405,
+        "davies_bouldin": 0.8942072487312117
+      },
+      {
+        "k": 4,
+        "silhouette": 0.37668160607658147,
+        "min_cluster_share": 0.16433353621424224,
+        "eligible": true,
+        "ineligible_reason": null,
+        "inertia": 6785.246264090902,
+        "calinski_harabasz": 4321.115967948759,
+        "davies_bouldin": 0.9111302043153406
+      },
+      {
+        "k": 5,
+        "silhouette": 0.3582944745170243,
+        "min_cluster_share": 0.1529722053154798,
+        "eligible": true,
+        "ineligible_reason": null,
+        "inertia": 5567.05701779674,
+        "calinski_harabasz": 4218.5677161339,
+        "davies_bouldin": 0.9580919373411108
+      },
+      {
+        "k": 6,
+        "silhouette": 0.35604100750964024,
+        "min_cluster_share": 0.12132278352607019,
+        "eligible": true,
+        "ineligible_reason": null,
+        "inertia": 4912.390892688842,
+        "calinski_harabasz": 3955.0513651061856,
+        "davies_bouldin": 1.0364835916096455
+      },
+      {
+        "k": 7,
+        "silhouette": 0.32864548164342844,
+        "min_cluster_share": 0.10387502536011362,
+        "eligible": false,
+        "ineligible_reason": "K=7 is outside the allowed business range [3, 6]",
+        "inertia": 4400.717248290953,
+        "calinski_harabasz": 3773.761435108391,
+        "davies_bouldin": 1.0917638965734606
+      },
+      {
+        "k": 8,
+        "silhouette": 0.3351404794622056,
+        "min_cluster_share": 0.08602150537634409,
+        "eligible": false,
+        "ineligible_reason": "K=8 is outside the allowed business range [3, 6]",
+        "inertia": 3987.741461875835,
+        "calinski_harabasz": 3641.6891240759555,
+        "davies_bouldin": 1.0464280455356212
+      }
+    ]
+  },
+  "feature_names": [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "service_count",
+    "contract_risk"
+  ],
+  "feature_count": 5,
+  "excluded_from_clustering": {
+    "always": [
+      "dataset target",
+      "dataset id column",
+      "churn",
+      "churn_probability",
+      "risk_band",
+      "clv",
+      "value_at_risk",
+      "expected_net_benefit",
+      "expected_benefit",
+      "intervention_decision",
+      "recommended_action",
+      "recommended_action_id"
+    ],
+    "note": "churn probability and every Phase 4 output are used only to PROFILE segments after clustering"
+  },
+  "preprocessing": {
+    "imputation": "median",
+    "scaling": "standard",
+    "steps": [
+      "features",
+      "impute",
+      "scale"
+    ]
+  },
+  "kmeans": {
+    "init": "k-means++",
+    "n_init": 10,
+    "max_iter": 300,
+    "tol": 0.0001,
+    "algorithm": "lloyd"
+  },
+  "centroids_original_units": [
+    {
+      "tenure": 12.93433931484521,
+      "MonthlyCharges": 61.541598694942905,
+      "TotalCharges": 842.4085440456754,
+      "service_count": 2.5318107667210787,
+      "contract_risk": 1.9371941272430524
+    },
+    {
+      "tenure": 43.31167400881058,
+      "MonthlyCharges": 27.287444933920696,
+      "TotalCharges": 1216.2610958149785,
+      "service_count": 1.6563876651982596,
+      "contract_risk": 0.40638766519823954
+    },
+    {
+      "tenure": 56.67495219885294,
+      "MonthlyCharges": 91.37119184193753,
+      "TotalCharges": 5177.77017208413,
+      "service_count": 5.693435309114079,
+      "contract_risk": 0.8406628425748909
+    }
+  ],
+  "training": {
+    "fit_split": "train",
+    "n_customers": 4929,
+    "uses_target": false,
+    "uses_churn_probability": false,
+    "uses_validation": false,
+    "uses_test": false,
+    "kmeans_inertia": 9180.420170687887,
+    "kmeans_iterations": 8
+  },
+  "dataset": {
+    "path": "ml/data/raw/telco_churn.csv",
+    "version": "sha256:16320c9c1ec7",
+    "rows": 7043,
+    "split_sizes": {
+      "train": 4929,
+      "validation": 1057,
+      "test": 1057
+    }
+  },
+  "configuration": {
+    "seed": null,
+    "model_version": "5.0.0",
+    "features": {
+      "numeric": [
+        "tenure",
+        "MonthlyCharges",
+        "TotalCharges"
+      ],
+      "engineered": [
+        "service_count",
+        "contract_risk"
+      ],
+      "forbidden": [
+        "churn",
+        "churn_probability",
+        "risk_band",
+        "clv",
+        "value_at_risk",
+        "expected_net_benefit",
+        "expected_benefit",
+        "intervention_decision",
+        "recommended_action",
+        "recommended_action_id"
+      ]
+    },
+    "imputation": "median",
+    "scaling": "standard",
+    "kmeans": {
+      "init": "k-means++",
+      "n_init": 10,
+      "max_iter": 300,
+      "tol": 0.0001,
+      "algorithm": "lloyd"
+    },
+    "k_selection": {
+      "candidates": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "method": "silhouette",
+      "fixed_k": null,
+      "min_k": 3,
+      "max_k": 6,
+      "min_cluster_share": 0.05,
+      "silhouette_sample_size": null,
+      "report_metrics": [
+        "inertia",
+        "calinski_harabasz",
+        "davies_bouldin"
+      ]
+    },
+    "naming": {
+      "value_high_min_ratio": 1.15,
+      "value_low_max_ratio": 0.85,
+      "risk_high_min_probability": "model_threshold",
+      "risk_stable_max_probability": 0.2,
+      "tenure_established_min_ratio": 1.15,
+      "tenure_new_max_ratio": 0.85
+    },
+    "priority": {
+      "weights": {
+        "value_at_risk_share": 0.4,
+        "total_enb_share": 0.3,
+        "avg_churn_probability": 0.2,
+        "intervention_rate": 0.1
+      },
+      "tiers": [
+        {
+          "name": "HIGH",
+          "min_score": 0.3
+        },
+        {
+          "name": "MEDIUM",
+          "min_score": 0.15
+        },
+        {
+          "name": "LOW",
+          "min_score": 0.0
+        }
+      ]
+    },
+    "artifact_dir": "models",
+    "artifact_name": "trichurn_segmentation",
+    "report_path": "ml/experiments/phase5_report.json"
+  },
+  "segment_catalog": [
+    {
+      "segment_id": 0,
+      "segment_name": "Low Value / High Risk",
+      "customer_count": 2453,
+      "priority_rank": 1,
+      "priority_tier": "HIGH"
+    },
+    {
+      "segment_id": 1,
+      "segment_name": "Low Value / Stable",
+      "customer_count": 908,
+      "priority_rank": 3,
+      "priority_tier": "LOW"
+    },
+    {
+      "segment_id": 2,
+      "segment_name": "High Value / Stable",
+      "customer_count": 1568,
+      "priority_rank": 2,
+      "priority_tier": "MEDIUM"
+    }
+  ],
+  "profiling_provenance": {
+    "business_config_sha256": "fb1e489bee97364f2f4c9f3708c7196ba6738e411dcccbd5cd703a35d13ee910",
+    "churn_model_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+    "note": "Segments are descriptive groups found by unsupervised clustering of customer attributes. Churn probability, CLV, value at risk and ENB describe each segment under the Phase 2 model and the configured Phase 4 assumptions; they do not show that a segment's characteristics cause churn or that a retention action will work."
+  },
+  "environment": {
+    "python": "3.12.3",
+    "scikit_learn": "1.8.0",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4"
+  },
+  "artifact_file": "trichurn_segmentation_v5.0.0.joblib",
+  "artifact_sha256": "38423c9cf19b05aa35b72acd44ea3a8af4c3775a1e6cf2bb739ee1972dc05927"
+}

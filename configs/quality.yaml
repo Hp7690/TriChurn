@@ -1,0 +1,34 @@
+# Validation limits, leakage heuristics and the Data Quality Score definition.
+limits:
+  max_file_mb: 50
+  min_rows: 100
+  min_minority_samples: 20            # needed for stratified CV to be meaningful
+  max_overall_missing_fraction: 0.5   # above this the dataset is rejected
+  max_column_missing_fraction: 0.6    # above this the column is dropped (warning)
+  max_unparsable_numeric_fraction: 0.05
+  max_abs_numeric_value: 1000000000000
+
+id_like:
+  min_rows_to_judge: 50
+  categorical_unique_ratio: 0.95
+  integer_unique_ratio: 0.98
+
+numeric_inference_min_parse_fraction: 0.95
+
+leakage:
+  min_balanced_accuracy: 0.99   # a single column that (almost) reproduces the target
+  max_cardinality: 50
+  max_cardinality_ratio: 0.02
+  min_single_feature_auc: 0.99  # one numeric column that alone separates the classes
+  name_min_length: 3
+
+# Data Quality Score: start at 100, subtract capped penalties. See docs/phase1.md.
+score:
+  caps: {missing: 30, duplicates: 20, structure: 10, imbalance: 15, sample_size: 15}
+  missing_full_penalty_fraction: 0.20      # 20% missing cells => full missing penalty
+  duplicates_full_penalty_fraction: 0.10   # 10% duplicate rows/IDs => full penalty
+  structure_full_penalty_fraction: 0.20    # 20% constant/ID-like columns => full penalty
+  imbalance_threshold: 0.10                # minority share below this is penalised
+  imbalance_full_penalty_share: 0.01
+  small_sample_rows: 1000
+bands: {excellent: 90, good: 75, needs_attention: 50}   # else "Poor"

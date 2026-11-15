@@ -1,0 +1,387 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   TriChurn design tokens
+   Colours are stored as space-separated RGB channels so Tailwind can apply
+   opacity modifiers (bg-brand-600/20). The slate / brand / status scales are
+   re-pointed in tailwind.config.js, so every existing utility class
+   (text-slate-600, bg-rose-50, ...) follows the active theme automatically.
+   Scales are NOT simple inversions: 50-200 are surfaces, 300 is a border,
+   400-500 are muted text, 600-900 are text. Dark mode swaps those roles.
+   ========================================================================== */
+@layer base {
+  :root {
+    color-scheme: light;
+    --c-canvas: 244 246 250;
+    --c-surface: 255 255 255;
+    --c-sunken: 245 247 251;
+    --c-overlay: 18 26 46;
+  --c-slate-50: 245 247 251;
+  --c-slate-100: 237 240 247;
+  --c-slate-200: 225 230 240;
+  --c-slate-300: 205 213 228;
+  --c-slate-400: 138 149 173;
+  --c-slate-500: 92 104 130;
+  --c-slate-600: 74 86 112;
+  --c-slate-700: 54 65 90;
+  --c-slate-800: 35 44 66;
+  --c-slate-900: 18 26 46;
+  --c-brand-50: 239 242 255;
+  --c-brand-100: 224 230 255;
+  --c-brand-200: 199 210 254;
+  --c-brand-300: 165 180 252;
+  --c-brand-400: 125 142 245;
+  --c-brand-500: 88 105 232;
+  --c-brand-600: 62 79 214;
+  --c-brand-700: 48 63 180;
+  --c-brand-800: 40 52 145;
+  --c-brand-900: 34 43 110;
+  --c-rose-50: 255 241 242;
+  --c-rose-100: 255 228 230;
+  --c-rose-200: 254 205 211;
+  --c-rose-300: 253 164 175;
+  --c-rose-400: 251 113 133;
+  --c-rose-500: 244 63 94;
+  --c-rose-600: 225 29 72;
+  --c-rose-700: 190 18 60;
+  --c-rose-800: 159 18 57;
+  --c-rose-900: 136 19 55;
+  --c-amber-50: 255 251 235;
+  --c-amber-100: 254 243 199;
+  --c-amber-200: 253 230 138;
+  --c-amber-300: 252 211 77;
+  --c-amber-400: 251 191 36;
+  --c-amber-500: 245 158 11;
+  --c-amber-600: 217 119 6;
+  --c-amber-700: 180 83 9;
+  --c-amber-800: 146 64 14;
+  --c-amber-900: 120 53 15;
+  --c-emerald-50: 236 253 245;
+  --c-emerald-100: 209 250 229;
+  --c-emerald-200: 167 243 208;
+  --c-emerald-300: 110 231 183;
+  --c-emerald-400: 52 211 153;
+  --c-emerald-500: 16 185 129;
+  --c-emerald-600: 5 150 105;
+  --c-emerald-700: 4 120 87;
+  --c-emerald-800: 6 95 70;
+  --c-emerald-900: 6 78 59;
+  --c-indigo-50: 238 242 255;
+  --c-indigo-100: 224 231 255;
+  --c-indigo-200: 199 210 254;
+  --c-indigo-300: 165 180 252;
+  --c-indigo-400: 129 140 248;
+  --c-indigo-500: 99 102 241;
+  --c-indigo-600: 79 70 229;
+  --c-indigo-700: 67 56 202;
+  --c-indigo-800: 55 48 163;
+  --c-indigo-900: 49 46 129;
+  --c-teal-50: 240 253 250;
+  --c-teal-100: 204 251 241;
+  --c-teal-200: 153 246 228;
+  --c-teal-300: 94 234 212;
+  --c-teal-400: 45 212 191;
+  --c-teal-500: 20 184 166;
+  --c-teal-600: 13 148 136;
+  --c-teal-700: 15 118 110;
+  --c-teal-800: 17 94 89;
+  --c-teal-900: 19 78 74;
+  --c-orange-50: 255 247 237;
+  --c-orange-100: 255 237 213;
+  --c-orange-200: 254 215 170;
+  --c-orange-300: 253 186 116;
+  --c-orange-400: 251 146 60;
+  --c-orange-500: 249 115 22;
+  --c-orange-600: 234 88 12;
+  --c-orange-700: 194 65 12;
+  --c-orange-800: 154 52 18;
+  --c-orange-900: 124 45 18;
+  --c-fuchsia-50: 253 244 255;
+  --c-fuchsia-100: 250 232 255;
+  --c-fuchsia-200: 245 208 254;
+  --c-fuchsia-300: 240 171 252;
+  --c-fuchsia-400: 232 121 249;
+  --c-fuchsia-500: 217 70 239;
+  --c-fuchsia-600: 192 38 211;
+  --c-fuchsia-700: 162 28 175;
+  --c-fuchsia-800: 134 25 143;
+  --c-fuchsia-900: 112 26 117;
+
+    --btn-primary-hover: 48 63 180;
+    --btn-danger-hover: 190 18 60;
+
+    --shadow-sm: 0 1px 2px rgb(18 26 46 / 0.05), 0 0 0 1px rgb(18 26 46 / 0.02);
+    --shadow-md: 0 4px 12px -2px rgb(18 26 46 / 0.08), 0 2px 4px -2px rgb(18 26 46 / 0.05);
+    --shadow-lg: 0 12px 28px -6px rgb(18 26 46 / 0.14), 0 4px 8px -4px rgb(18 26 46 / 0.06);
+    --shadow-xl: 0 24px 48px -12px rgb(18 26 46 / 0.22);
+
+    --chart-grid: #e1e6f0;
+    --chart-axis: #647089;
+    --chart-axis-strong: #36415a;
+    --chart-cursor: rgb(18 26 46 / 0.05);
+  }
+
+  :root.dark {
+    color-scheme: dark;
+    --c-canvas: 9 13 26;
+    --c-surface: 17 24 44;
+    --c-sunken: 13 19 37;
+    --c-overlay: 3 6 14;
+  --c-slate-50: 21 29 52;
+  --c-slate-100: 26 35 64;
+  --c-slate-200: 39 49 77;
+  --c-slate-300: 52 64 95;
+  --c-slate-400: 125 137 163;
+  --c-slate-500: 148 160 185;
+  --c-slate-600: 172 182 203;
+  --c-slate-700: 196 205 224;
+  --c-slate-800: 221 227 241;
+  --c-slate-900: 238 241 249;
+  --c-brand-50: 24 30 66;
+  --c-brand-100: 31 39 88;
+  --c-brand-200: 44 55 120;
+  --c-brand-300: 70 84 170;
+  --c-brand-400: 110 125 235;
+  --c-brand-500: 118 134 245;
+  --c-brand-600: 76 94 224;
+  --c-brand-700: 160 174 255;
+  --c-brand-800: 188 198 255;
+  --c-brand-900: 214 220 255;
+  --c-rose-50: 42 18 27;
+  --c-rose-100: 58 24 36;
+  --c-rose-200: 92 36 52;
+  --c-rose-300: 136 52 72;
+  --c-rose-400: 251 113 133;
+  --c-rose-500: 244 63 94;
+  --c-rose-600: 225 29 72;
+  --c-rose-700: 251 113 133;
+  --c-rose-800: 253 164 175;
+  --c-rose-900: 254 205 211;
+  --c-amber-50: 43 31 10;
+  --c-amber-100: 61 44 12;
+  --c-amber-200: 99 70 14;
+  --c-amber-300: 146 100 14;
+  --c-amber-400: 251 191 36;
+  --c-amber-500: 245 158 11;
+  --c-amber-600: 217 119 6;
+  --c-amber-700: 252 211 77;
+  --c-amber-800: 253 224 130;
+  --c-amber-900: 254 240 180;
+  --c-emerald-50: 8 38 31;
+  --c-emerald-100: 10 56 44;
+  --c-emerald-200: 14 88 66;
+  --c-emerald-300: 20 120 90;
+  --c-emerald-400: 52 211 153;
+  --c-emerald-500: 16 185 129;
+  --c-emerald-600: 5 150 105;
+  --c-emerald-700: 52 211 153;
+  --c-emerald-800: 110 231 183;
+  --c-emerald-900: 167 243 208;
+  --c-indigo-50: 26 28 66;
+  --c-indigo-100: 34 38 90;
+  --c-indigo-200: 48 54 124;
+  --c-indigo-300: 80 88 180;
+  --c-indigo-400: 129 140 248;
+  --c-indigo-500: 99 102 241;
+  --c-indigo-600: 79 70 229;
+  --c-indigo-700: 165 180 252;
+  --c-indigo-800: 199 210 254;
+  --c-indigo-900: 224 231 255;
+  --c-teal-50: 8 40 40;
+  --c-teal-100: 10 58 56;
+  --c-teal-200: 14 90 86;
+  --c-teal-300: 20 120 112;
+  --c-teal-400: 45 212 191;
+  --c-teal-500: 20 184 166;
+  --c-teal-600: 13 148 136;
+  --c-teal-700: 45 212 191;
+  --c-teal-800: 94 234 212;
+  --c-teal-900: 153 246 228;
+  --c-orange-50: 44 22 8;
+  --c-orange-100: 62 31 10;
+  --c-orange-200: 100 48 14;
+  --c-orange-300: 150 70 18;
+  --c-orange-400: 251 146 60;
+  --c-orange-500: 249 115 22;
+  --c-orange-600: 234 88 12;
+  --c-orange-700: 253 186 116;
+  --c-orange-800: 254 215 170;
+  --c-orange-900: 255 237 213;
+  --c-fuchsia-50: 40 14 46;
+  --c-fuchsia-100: 58 20 66;
+  --c-fuchsia-200: 90 30 100;
+  --c-fuchsia-300: 130 44 144;
+  --c-fuchsia-400: 232 121 249;
+  --c-fuchsia-500: 217 70 239;
+  --c-fuchsia-600: 192 38 211;
+  --c-fuchsia-700: 240 171 252;
+  --c-fuchsia-800: 245 208 254;
+  --c-fuchsia-900: 250 232 255;
+
+    --btn-primary-hover: 96 112 238;
+    --btn-danger-hover: 244 63 94;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.02);
+    --shadow-md: 0 6px 16px -2px rgb(0 0 0 / 0.45);
+    --shadow-lg: 0 14px 32px -6px rgb(0 0 0 / 0.55);
+    --shadow-xl: 0 28px 56px -12px rgb(0 0 0 / 0.65);
+
+    --chart-grid: #27314d;
+    --chart-axis: #94a0b9;
+    --chart-axis-strong: #c4cde0;
+    --chart-cursor: rgb(255 255 255 / 0.06);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-canvas font-sans text-slate-900 antialiased;
+    font-feature-settings: 'tnum' 1, 'cv11' 1;
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.012em;
+  }
+  ::selection {
+    background-color: rgb(var(--c-brand-500) / 0.28);
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-surface;
+  }
+
+  /* Native controls: one look everywhere, theme-aware. Utility classes on an
+     element still win, so existing per-page classes keep working. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+  select,
+  textarea {
+    @apply border-slate-300 bg-surface text-slate-900 transition-colors;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-slate-400;
+  }
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):hover,
+  select:hover,
+  textarea:hover {
+    border-color: rgb(var(--c-slate-400));
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    --tw-ring-offset-width: 0px;
+    border-color: rgb(var(--c-brand-500));
+  }
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    @apply cursor-not-allowed bg-slate-100 text-slate-500;
+  }
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range'] {
+    accent-color: rgb(var(--c-brand-600));
+  }
+  table {
+    border-collapse: collapse;
+  }
+  /* A grid without an explicit template sizes its single column to content, which pushes wide
+     children (tables) past the viewport on small screens. Breakpoint classes such as
+     lg:grid-cols-2 still win because utilities are layered after base. */
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Recharts renders default light-theme chrome inline; align it with tokens. */
+  .recharts-cartesian-grid line {
+    stroke: var(--chart-grid);
+  }
+  .recharts-cartesian-axis-line,
+  .recharts-cartesian-axis-tick-line {
+    stroke: var(--chart-grid);
+  }
+  .recharts-cartesian-axis-tick-value,
+  .recharts-text {
+    fill: var(--chart-axis);
+    font-size: 12px;
+  }
+  .recharts-legend-item-text {
+    color: rgb(var(--c-slate-700)) !important;
+  }
+  .recharts-default-tooltip {
+    background-color: rgb(var(--c-surface)) !important;
+    border: 1px solid rgb(var(--c-slate-200)) !important;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+  }
+  .recharts-tooltip-label,
+  .recharts-tooltip-item {
+    color: rgb(var(--c-slate-800)) !important;
+  }
+  .recharts-tooltip-cursor {
+    fill: var(--chart-cursor);
+  }
+  .recharts-sector,
+  .recharts-rectangle {
+    outline: none;
+  }
+}
+
+/* ==========================================================================
+   Component classes (the design system's buttons and form fields)
+   ========================================================================== */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-colors;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply gap-1.5 rounded-md px-3 py-1.5 text-xs;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white shadow-sm;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: rgb(var(--btn-primary-hover));
+  }
+  .btn-secondary {
+    @apply border border-slate-300 bg-surface text-slate-800 shadow-sm;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    @apply bg-slate-50;
+  }
+  .btn-danger {
+    @apply bg-rose-600 text-white shadow-sm;
+  }
+  .btn-danger:hover:not(:disabled) {
+    background-color: rgb(var(--btn-danger-hover));
+  }
+  .btn-ghost {
+    @apply text-slate-700;
+  }
+  .btn-ghost:hover:not(:disabled) {
+    @apply bg-slate-100 text-slate-900;
+  }
+  .field {
+    @apply w-full rounded-lg border border-slate-300 bg-surface px-3 py-2 text-sm;
+  }
+  .field-label {
+    @apply mb-1 block text-xs font-medium text-slate-600;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--c-slate-300)) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

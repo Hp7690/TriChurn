@@ -1,0 +1,10 @@
+seed: 42
+split: {val_size: 0.15, test_size: 0.15}   # test is held out and not used in Phase 1
+cv: {n_splits: 5}
+imbalance:
+  candidates: [none, balanced]   # SMOTE intentionally not used (see docs/phase1.md)
+models:
+  logistic_regression: {C: 1.0, max_iter: 2000}
+  random_forest: {n_estimators: 300, min_samples_leaf: 3, max_depth: null}
+  xgboost: {n_estimators: 300, max_depth: 4, learning_rate: 0.05,
+            subsample: 0.8, colsample_bytree: 0.8}

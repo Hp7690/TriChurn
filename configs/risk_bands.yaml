@@ -1,0 +1,8 @@
+# Phase 4: risk bands over the model's churn probability (no band system existed in Phases 1-3).
+# Bands are ordered; a customer falls in the LAST band whose `min_probability` is <= their probability.
+# The first band must start at 0. Thresholds below are illustrative policy choices, not model outputs.
+bands:
+  - {name: LOW,      min_probability: 0.00}
+  - {name: MEDIUM,   min_probability: 0.20}
+  - {name: HIGH,     min_probability: 0.50}
+  - {name: CRITICAL, min_probability: 0.75}

@@ -1,0 +1,121 @@
+# Phase 8 CLI transcript (Linux, Python 3.12, MLflow 3.17.2); scratch store outside the project
+$ python scripts/run_phase8_registry.py verify
+{
+  "actual_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "actual_version": "2.0.0",
+  "artifact": "trichurn_churn_model_v2.0.0.joblib",
+  "expected_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "expected_version": "2.0.0",
+  "ok": true,
+  "reason": null
+}
+[exit code 0]
+$ python scripts/run_phase8_registry.py register
+{
+  "alias": "production",
+  "artifact_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "experiment": "TriChurn-Churn-Prediction",
+  "metrics": {
+    "accuracy": 0.771050141911069,
+    "brier_score": 0.13550287198874078,
+    "f1": 0.6322188449848024,
+    "log_loss": 0.41066933801902133,
+    "pr_auc": 0.6411807304400241,
+    "precision": 0.5502645502645502,
+    "recall": 0.7428571428571429,
+    "roc_auc": 0.8492071152785439
+  },
+  "registered_model": "TriChurn-Churn-Model",
+  "registry_version": "1",
+  "run_id": "2c773519f1af478c9a561eb111513144",
+  "run_reused": false,
+  "semantic_version": "2.0.0",
+  "version_reused": false
+}
+[exit code 0]
+$ python scripts/run_phase8_registry.py register
+{
+  "alias": "production",
+  "artifact_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "experiment": "TriChurn-Churn-Prediction",
+  "metrics": {
+    "accuracy": 0.771050141911069,
+    "brier_score": 0.13550287198874078,
+    "f1": 0.6322188449848024,
+    "log_loss": 0.41066933801902133,
+    "pr_auc": 0.6411807304400241,
+    "precision": 0.5502645502645502,
+    "recall": 0.7428571428571429,
+    "roc_auc": 0.8492071152785439
+  },
+  "registered_model": "TriChurn-Churn-Model",
+  "registry_version": "1",
+  "run_id": "2c773519f1af478c9a561eb111513144",
+  "run_reused": true,
+  "semantic_version": "2.0.0",
+  "version_reused": true
+}
+[exit code 0]
+$ python scripts/run_phase8_registry.py status
+{
+  "integrity": {
+    "actual_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+    "actual_version": "2.0.0",
+    "artifact": "trichurn_churn_model_v2.0.0.joblib",
+    "expected_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+    "expected_version": "2.0.0",
+    "ok": true,
+    "reason": null
+  },
+  "model_version": "2.0.0",
+  "registry": {
+    "alias": "production",
+    "artifact_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+    "matches_pinned_sha256": true,
+    "model_name": "TriChurn-Churn-Model",
+    "registry_version": "1",
+    "semantic_version": "2.0.0",
+    "status": "registered"
+  },
+  "status": "verified"
+}
+[exit code 0]
+$ python scripts/run_phase8_registry.py fetch --dest /tmp/p8final/restored
+{
+  "fetched_and_verified": true,
+  "file": "trichurn_churn_model_v2.0.0.joblib",
+  "sha256_pinned": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad"
+}
+[exit code 0]
+db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad
+# --- tampered copy (one byte flipped) is refused everywhere
+$ python scripts/run_phase8_registry.py verify
+{
+  "actual_sha256": "5e448d4d8564c4930647e1958f880cdd2153f510f0d53951da5c3adebff56ca5",
+  "actual_version": null,
+  "artifact": "trichurn_churn_model_v2.0.0.joblib",
+  "expected_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "expected_version": "2.0.0",
+  "ok": false,
+  "reason": "sha256_mismatch"
+}
+[exit code 2]
+$ python scripts/run_phase8_registry.py register --force
+INTEGRITY FAILURE: model artifact 'trichurn_churn_model_v2.0.0.joblib': sha256_mismatch
+[exit code 2]
+# --- wrong pin
+$ python scripts/run_phase8_registry.py verify
+{
+  "actual_sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad",
+  "actual_version": null,
+  "artifact": "trichurn_churn_model_v2.0.0.joblib",
+  "expected_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "expected_version": "2.0.0",
+  "ok": false,
+  "reason": "sha256_mismatch"
+}
+[exit code 2]
+# --- malformed config
+$ python scripts/run_phase8_registry.py verify
+CONFIGURATION ERROR: TRICHURN_MODEL_SHA256 must be a 64-character lowercase hex SHA-256.
+[exit code 4]

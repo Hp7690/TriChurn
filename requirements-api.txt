@@ -1,0 +1,10 @@
+# Phase 6/9 API runtime and test dependencies (the original requirements.txt did not declare them).
+# Lower bounds are the oldest versions whose features this code relies on; upper bounds guard against major changes.
+# NOTE: these ranges could NOT be resolved or installed in the offline environment where Phase 9 was written -
+# run `pip install -r requirements.txt -r requirements-api.txt` and then the verification commands in PHASE9_README.md.
+fastapi>=0.115,<1.0        # Annotated Query/Path parameters, lifespan handlers
+pydantic>=2.7,<3.0         # v2 API (model_validate, ConfigDict, Field(pattern=...))
+uvicorn[standard]>=0.30,<1.0
+httpx>=0.27,<1.0           # required by fastapi.testclient.TestClient
+pytest>=8.0
+ruff>=0.6

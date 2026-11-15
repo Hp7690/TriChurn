@@ -1,0 +1,80 @@
+# Phase 4: business decisioning. Every number here is a BUSINESS ASSUMPTION chosen for illustration, not an
+# estimate learned from data and not a causal effect. Replace them with your own figures.
+# Amounts are used as-is: the Telco dataset has no currency field, so `currency` is a label and
+# `clv.revenue_multiplier` is the only conversion applied (1.0 = source amounts are already in `currency`).
+# Action costs and policy floors must be expressed on the same monetary scale as the revenue column.
+
+currency:
+  code: INR
+  symbol: "\u20b9"            # presentation only; never used in calculations
+
+clv:
+  method: revenue_x_lifetime          # CLV = gross_margin * monthly_revenue * discounted months of remaining lifetime
+  revenue_field: MonthlyCharges       # customer column holding monthly revenue (same as datasets/telco.yaml value_column)
+  revenue_multiplier: 1.0             # source currency unit -> `currency`
+  gross_margin: 1.0                   # share of revenue counted as value (1.0 = revenue-based CLV)
+  monthly_discount_rate: 0.0          # 0 = no discounting; otherwise sum over months of 1/(1+d)^t
+  lifetime_segment_field: Contract    # column used to look up the expected remaining lifetime
+  lifetime_months_by_segment:         # assumed remaining months per segment value (assumptions, not data)
+    Month-to-month: 12
+    One year: 24
+    Two year: 36
+  default_lifetime_months: 18         # explicit fallback when the segment value is missing or not listed
+  allow_default_lifetime: true        # false => a missing/unknown segment value raises instead of using the fallback
+
+# Retention actions: cost is paid per customer treated; success_rate is an ASSUMED probability that the action
+# retains a customer who would otherwise churn. `no_action` is mandatory, enabled, cost 0, success_rate 0.
+# `min_clv` (optional) makes an action eligible only for customers whose CLV is at least that value.
+actions:
+  no_action:
+    name: No action
+    cost: 0
+    success_rate: 0.0
+    description: Do nothing for this customer.
+    enabled: true
+  retention_email:
+    name: Retention email
+    cost: 2
+    success_rate: 0.05
+    description: Automated, low-touch retention email.
+    enabled: true
+  loyalty_offer:
+    name: Loyalty offer
+    cost: 25
+    success_rate: 0.15
+    description: Loyalty rewards or perks for continuing service.
+    enabled: true
+  priority_support:
+    name: Priority support
+    cost: 40
+    success_rate: 0.18
+    description: Proactive outreach by a senior support agent.
+    enabled: true
+    min_clv: 1000
+  discount_offer:
+    name: Discount offer
+    cost: 60
+    success_rate: 0.25
+    description: Time-limited discount on the monthly plan.
+    enabled: true
+  personalized_offer:
+    name: Personalized offer
+    cost: 120
+    success_rate: 0.30
+    description: Bespoke plan or bundle offer from a retention specialist.
+    enabled: true
+    min_clv: 1500
+
+policy:
+  # INTERVENE only if ALL hold: probability >= min_churn_probability, CLV >= min_customer_value, and the best
+  # eligible action has expected net benefit strictly greater than min_expected_net_benefit.
+  min_churn_probability: model_threshold   # a number in [0,1], or "model_threshold" = the locked model's operating threshold
+  min_customer_value: 500
+  min_expected_net_benefit: 0
+  max_action_cost: null                    # optional budget cap per customer (null = no cap)
+
+what_if:
+  sweeps:
+    churn_probability: {start: 0.05, stop: 0.95, step: 0.05}
+    success_rate_multiplier: [0.5, 0.75, 1.0, 1.25, 1.5]   # applied to every non-zero success rate, capped at 1
+    cost_multiplier: [0.5, 0.75, 1.0, 1.25, 1.5]

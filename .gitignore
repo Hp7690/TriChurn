@@ -1,0 +1,79 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+.env
+*.egg-info/
+# datasets and artifacts are versioned with DVC (Phase 10), not git
+ml/data/raw/*.csv
+ml/data/processed/
+models/*.joblib
+ml/experiments/*.json
+# TriChurn local databases and customer data
+*.sqlite3
+*.db
+data/*.csv
+data/**/*.csv
+frontend/public/data/*.csv
+# Model artifacts - publish separately after review
+
+# Node dependencies and generated builds
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Python environments and generated files
+venv/
+ENV/
+htmlcov/
+.mypy_cache/
+
+# Local IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local archives and debug bundles
+*.zip
+
+# Local MLflow tracking database and artifacts
+mlflow_local/
+
+# Historical backups and duplicate project copies
+phase11_preintegration_backup/
+trichurn-fixed/
+trichurn_phase1/
+trichurn_phase1_1/
+
+# Local diagnostics and installation state
+.phase12_install.json
+phase2_isolation_diagnostic.json
+diagnose_phase2_isolation.py
+
+# Previous README backup
+README_backup_before_github.md
+
+# Local customer datasets and runtime data
+data/*.csv
+data/**/*.csv
+
+# Nested generated directories
+**/node_modules/
+**/dist/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# Temporary backups and pre-fix snapshots
+*.bak
+*.backup
+*.backup_*
+*.pre-*
+*.pre_*
+*.ruff-backup
+
+# Local Phase 9 diagnostic output
+PHASE9_BASELINE_DIFF.txt

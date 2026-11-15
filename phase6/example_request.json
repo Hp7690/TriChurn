@@ -1,0 +1,24 @@
+{
+  "customer_id": "EXAMPLE-0001",
+  "features": {
+    "SeniorCitizen": 0,
+    "tenure": 10,
+    "MonthlyCharges": 29.75,
+    "TotalCharges": 301.9,
+    "gender": "Female",
+    "Partner": "No",
+    "Dependents": "No",
+    "PhoneService": "No",
+    "MultipleLines": "No phone service",
+    "InternetService": "DSL",
+    "OnlineSecurity": "Yes",
+    "OnlineBackup": "No",
+    "DeviceProtection": "No",
+    "TechSupport": "No",
+    "StreamingTV": "No",
+    "StreamingMovies": "No",
+    "Contract": "Month-to-month",
+    "PaperlessBilling": "No",
+    "PaymentMethod": "Mailed check"
+  }
+}

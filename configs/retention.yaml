@@ -1,0 +1,29 @@
+# TriChurn Phase 9 - Retention Intelligence settings.
+# Retention ACTIONS (costs, assumed success rates, eligibility) are NOT defined here: configs/business.yaml (Phase 4)
+# remains the single source of truth. This file only holds ranking-heuristic and operational settings.
+
+priority:
+  # Weights of the heuristic priority score (must sum to 1). The score is a weighted blend of percentile ranks
+  # (0-1) across the scored portfolio. It is a RANKING AID, not a probability, and it has not been statistically
+  # validated against campaign outcomes.
+  weights:
+    value_at_risk: 0.40          # Phase 4 value at risk = CLV x churn probability
+    churn_probability: 0.30      # locked Phase 2 model output
+    expected_net_benefit: 0.30   # Phase 4 ENB of the recommended action (negative values count as 0)
+  # Minimum score (0-100) for tiers P1 > P2 > P3. Intervention candidates below the P3 cut-off are tier P4.
+  # Customers with a Phase 4 decision of DO_NOT_INTERVENE are always tier MONITOR.
+  tier_min_scores: [95.0, 90.0, 80.0]
+
+simulator:
+  max_scenarios: 10
+  max_target_customers: 10000
+
+campaigns:
+  max_customers_per_request: 1000
+
+uplift_readiness:
+  # Minimum evidence before anyone should attempt uplift modelling. These are conservative DATA-SUFFICIENCY
+  # checks, not a statistical power calculation.
+  min_customers_per_arm: 500
+  min_outcome_coverage: 0.8       # share of assigned customers with a recorded outcome
+  require_randomized_assignment: true
