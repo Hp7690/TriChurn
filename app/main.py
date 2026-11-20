@@ -54,10 +54,30 @@ def create_app(adapter: Phase15Port | None = None, settings: Settings | None = N
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if settings.environment == "production":
+            from scripts.runtime_asset_manager import RuntimeAssetError, prepare_runtime_assets
+            try:
+                await run_in_threadpool(prepare_runtime_assets, settings)
+            except RuntimeAssetError as exc:
+                logger.error("Runtime asset preparation failed: %s", exc)
+                raise
+
         try:
-            await run_in_threadpool(adapter.warm_up)          # fail-fast logging; readiness reports the outcome
+            await run_in_threadpool(adapter.warm_up)
         except Exception as exc:  # noqa: BLE001
             logger.error("Warm-up failed (%s)", type(exc).__name__, exc_info=exc)
+            if settings.environment == "production":
+                raise
+
+        if settings.environment == "production":
+            report = await run_in_threadpool(adapter.readiness)
+            if not report.ready:
+                failed_checks = ", ".join(
+                    f"{check.name}={check.detail}" for check in report.checks if not check.ok
+                ) or "no_checks_reported"
+                logger.error("Production startup readiness failed: %s", failed_checks)
+                raise RuntimeError("Production startup readiness checks failed.")
+
         yield
 
     app = FastAPI(
@@ -66,11 +86,7 @@ def create_app(adapter: Phase15Port | None = None, settings: Settings | None = N
         openapi_url="/openapi.json" if settings.enable_docs else None)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        ],
+        allow_origins=list(settings.cors_origins or ()),
         allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],

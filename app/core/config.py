@@ -9,7 +9,9 @@ import os
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from ipaddress import ip_address
 from pathlib import Path
+from urllib.parse import urlsplit
 
 API_VERSION = "v1"
 API_PREFIX = "/api/v1"
@@ -27,6 +29,7 @@ DEFAULT_DATASET_SPEC = "configs/datasets/telco.yaml"
 LOCKED_SEGMENTATION_K = 3
 LOCKED_SEGMENTATION_SEED = 42
 LOCKED_SEGMENTATION_FEATURES = ("tenure", "MonthlyCharges", "TotalCharges", "service_count", "contract_risk")
+DEFAULT_CORS_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174")
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 DISABLED = "disabled"
@@ -56,6 +59,46 @@ def _parse_sha(raw: str, name: str) -> str | None:
     return value
 
 
+def _parse_cors_origins(raw: str, environment: str) -> tuple[str, ...]:
+    origins = tuple(dict.fromkeys(value.strip().rstrip("/") for value in raw.split(",") if value.strip()))
+    if not origins:
+        raise ConfigurationError("TRICHURN_CORS_ORIGINS must contain at least one origin.")
+    for origin in origins:
+        try:
+            parsed = urlsplit(origin)
+            hostname = parsed.hostname
+            _ = parsed.port
+        except ValueError as exc:
+            raise ConfigurationError("TRICHURN_CORS_ORIGINS contains an invalid origin.") from exc
+        is_local_host = hostname is not None and (
+            hostname.lower() == "localhost"
+            or hostname.lower().endswith((".localhost", ".local"))
+            or _is_private_or_loopback_ip(hostname)
+        )
+        if (
+            origin == "*"
+            or parsed.scheme not in ("http", "https")
+            or not parsed.netloc
+            or parsed.path
+            or parsed.query
+            or parsed.fragment
+            or parsed.username
+            or parsed.password
+            or (environment == "production" and parsed.scheme != "https")
+            or (environment == "production" and is_local_host)
+        ):
+            raise ConfigurationError("TRICHURN_CORS_ORIGINS contains an invalid origin.")
+    return origins
+
+
+def _is_private_or_loopback_ip(hostname: str) -> bool:
+    try:
+        address = ip_address(hostname)
+    except ValueError:
+        return False
+    return address.is_private or address.is_loopback or address.is_link_local
+
+
 @dataclass(frozen=True)
 class Settings:
     environment: str = "production"
@@ -71,10 +114,21 @@ class Settings:
     expected_segmentation_features: tuple[str, ...] | None = LOCKED_SEGMENTATION_FEATURES
     adapter_factory: str | None = None      # "package.module:callable" -> custom Phase15Port (INTEGRATION.md)
     enable_docs: bool = True
+    cors_origins: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         if self.environment not in ENVIRONMENTS:
             raise ConfigurationError(f"environment must be one of {ENVIRONMENTS}.")
+        if self.cors_origins is None:
+            if self.environment == "production":
+                raise ConfigurationError("TRICHURN_CORS_ORIGINS is required in production.")
+            object.__setattr__(self, "cors_origins", DEFAULT_CORS_ORIGINS)
+        else:
+            object.__setattr__(
+                self,
+                "cors_origins",
+                _parse_cors_origins(",".join(self.cors_origins), self.environment),
+            )
 
     def resolve(self, path: str | Path) -> Path:
         """Absolute paths are kept; relative paths are anchored at the project root (never at the CWD)."""
@@ -99,4 +153,6 @@ class Settings:
             kwargs["phase5_expected_sha256"] = _parse_sha(get("PHASE5_SHA256"), ENV_PREFIX + "PHASE5_SHA256")
         if get("ENABLE_DOCS") is not None:
             kwargs["enable_docs"] = _parse_bool(get("ENABLE_DOCS"), ENV_PREFIX + "ENABLE_DOCS")
+        if get("CORS_ORIGINS") is not None:
+            kwargs["cors_origins"] = tuple(get("CORS_ORIGINS").split(","))
         return cls(**kwargs)  # type: ignore[arg-type]

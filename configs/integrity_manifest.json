@@ -1,0 +1,31 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "ml/data/raw/telco_churn.csv": {
+      "required": false,
+      "role": "Telco dataset the Phase 2 model was trained on (version sha256:16320c9c1ec7 in the artifact metadata); reported, not fatal, so a refreshed dataset can be used for candidates",
+      "sha256": "16320c9c1ec72448db59aa0a26a0b95401046bef5d02fd3aeb906448e3055e91"
+    },
+    "models/trichurn_churn_model_v2.0.0.joblib": {
+      "required": true,
+      "role": "Phase 2 approved churn model (locked)",
+      "sha256": "db399a55f650c6681e1caaf52257f909777e2c5fada3af5911370ddf5b8ff1ad"
+    },
+    "models/trichurn_churn_model_v2.0.0.metadata.json": {
+      "required": true,
+      "role": "Phase 2 model sidecar",
+      "sha256": "e326607436529dc21f95c4344ff2e0de50ba22eda52542612fab06fcc1746281"
+    },
+    "models/trichurn_segmentation_v5.0.0.joblib": {
+      "required": true,
+      "role": "Phase 5 approved segmentation (locked)",
+      "sha256": "38423c9cf19b05aa35b72acd44ea3a8af4c3775a1e6cf2bb739ee1972dc05927"
+    },
+    "models/trichurn_segmentation_v5.0.0.metadata.json": {
+      "required": true,
+      "role": "Phase 5 model sidecar",
+      "sha256": "4872bd9d5a62b7545a1098433df46f49b2a40dbf700717759871aef0cce20ec1"
+    }
+  },
+  "schema": 1
+}

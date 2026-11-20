@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "files": {
+    "data/telco_churn_live.csv": {
+      "required": true,
+      "role": "Private 80-customer demo sample returned only by the authenticated customer directory API",
+      "sha256": "4b33413dd5b97240770e62785f9a780648558657d8441c90841e720be500e048"
+    }
+  }
+}
