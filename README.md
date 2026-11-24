@@ -5,7 +5,7 @@ An explainable AI-powered customer churn prediction and retention intelligence p
 ## Project Status
 - Backend verification: Passed
 - Frontend verification: Passed
-- Deployment: Pending
+- Deployment: https://trichurn-frontend.vercel.app/dashboard
 - Project scope: Churn prediction, explainability, customer segmentation, retention and revenue intelligence.
 
 ## Technology Stack
